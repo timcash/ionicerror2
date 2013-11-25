@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /**
  * Copyright 2013 Drifty Co.
  * http://drifty.com/
@@ -2326,8 +2327,12 @@ body, .ionic-body {
     -webkit-transform: scale(2, 2); } }
 
 .overflow-scroll {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch; }
+  .overflow-scroll .scroll {
+    position: static;
+    height: 100%; }
 
 .has-header {
   top: 44px; }
@@ -3625,7 +3630,7 @@ button.item-button-right:after {
 .item-thumbnail-left {
   padding-left: 105px;
   min-height: 100px; }
-  .item-thumbnail-left img:first-child, .item-thumbnail-left .item-image {
+  .item-thumbnail-left > img:first-child, .item-thumbnail-left > .item-image {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -3636,7 +3641,7 @@ button.item-button-right:after {
 .item-thumbnail-right {
   padding-right: 105px;
   min-height: 100px; }
-  .item-thumbnail-right img:first-child, .item-thumbnail-right .item-image {
+  .item-thumbnail-right > img:first-child, .item-thumbnail-right > .item-image {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -5630,3 +5635,7 @@ a.button {
     margin-top: 20px; }
 .platform-ios7 .has-header {
   top: 64px; }
+.platform-ios7 .bar-subheader {
+  top: 64px; }
+.platform-ios7 .has-subheader {
+  top: 108px; }

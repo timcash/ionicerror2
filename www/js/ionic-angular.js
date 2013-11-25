@@ -24477,10 +24477,6 @@ angular.module('ionic.ui.header', ['ngAnimate'])
         console.log('Title changed');
         hb.align();
       });
-
-      $scope.$on('$destroy', function() {
-        //
-      });
     }
   };
 })
@@ -24580,7 +24576,7 @@ angular.module('ionic.ui.content', [])
   return {
     restrict: 'E',
     replace: true,
-    template: '<div class="scroll-content"><div class="scroll"></div></div>',
+    template: '<div class="scroll-content"></div>',
     transclude: true,
     scope: {
       onRefresh: '&',
@@ -24622,9 +24618,16 @@ angular.module('ionic.ui.content', [])
 
         // If they want plain overflow scrolling, add that as a class
         if($scope.scroll === "false") {
+          var clone = transclude($scope.$parent);
+          $element.append(clone);
         } else if(attr.overflowScroll === "true") {
           c.addClass('overflow-scroll');
+          var clone = transclude($scope.$parent);
+          $element.append(clone);
         } else {
+          var sc = document.createElement('div');
+          sc.className = 'scroll';
+          $element.append(sc);
           // Otherwise, supercharge this baby!
           var sv = new ionic.views.Scroll({
             el: $element[0].firstElementChild,
@@ -24640,11 +24643,11 @@ angular.module('ionic.ui.content', [])
           });
           // Let child scopes access this 
           $scope.scrollView = sv;
-        }
 
-        // Pass the parent scope down to the child
-        var clone = transclude($scope.$parent);
-        angular.element($element[0].firstElementChild).append(clone);
+          // Pass the parent scope down to the child
+          var clone = transclude($scope.$parent);
+          angular.element($element[0].firstElementChild).append(clone);
+        }
       };
     }
   };
@@ -24918,9 +24921,6 @@ angular.module('ionic.ui.loading', [])
     replace: true,
     transclude: true,
     link: function($scope, $element){
-      $scope.$on('$destroy', function() {
-        $element.remove();
-      });
       $element.addClass($scope.animation || '');
     },
     template: '<div class="loading-backdrop" ng-class="{enabled: showBackdrop}">' + 
@@ -25697,11 +25697,6 @@ angular.module('ionic.ui.radio', [])
         ngModel.$setViewValue($scope.$eval($attr.ngValue));
       };
 
-      $scope.$on('$destroy', function() {
-        $element.unbind('tap', tapHandler);
-        $element.unbind('click', clickHandler);
-      });
-
       if(ngModel) {
         //$element.bind('tap', tapHandler);
         $element.bind('click', clickHandler);
@@ -25791,6 +25786,7 @@ angular.module('ionic.ui.sideMenu', ['ionic.service.gesture'])
             return;
           }
           sideMenuCtrl._handleDrag(e);
+          e.gesture.srcEvent.preventDefault();
         };
 
         var dragGesture = Gesture.on('drag', dragFn, $element);
@@ -26253,7 +26249,6 @@ angular.module('ionic.ui.virtRepeat', [])
     compile: function(element, attr, transclude) {
       return function($scope, $element, $attr, ctrls) {
         var virtualList = ctrls[1];
-        var _this = this;
 
         virtualList.listView.renderViewport = function(high, low, start, end) {
         }
@@ -26577,6 +26572,10 @@ angular.module('ionic.ui.virtualRepeat', [])
           setViewportCss(dom.viewport);
           // When the user scrolls, we move the `state.firstActive`
           dom.bind('momentumScrolled', sfVirtualRepeatOnScroll);
+
+          scope.$on('$destroy', function () {
+            dom.unbind('momentumScrolled', sfVirtualRepeatOnScroll);
+          });
 
           // The watch on the collection is just a watch on the length of the
           // collection. We don't care if the content changes.
